@@ -1,5 +1,7 @@
 Goated Chrome Extension automatically skips to the end of ads and skips sponsorships!!
 
+The folder for the extension should be called extension, it might be nested deep in the files depending on how you unzip and download it
+
 
 To install, do the following:
 
