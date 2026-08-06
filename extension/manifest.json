@@ -2,6 +2,12 @@
   "manifest_version": 3,
   "name": "Goated Chrome Extension (yt ad and sponsorship skipper)",
   "version": "1.0",
+  "icons": {
+    "16": "goated-icon.png",
+    "32": "goated-icon.png",
+    "48": "goated-icon.png",
+    "128": "goated-icon.png"
+  },
   "description": "Automatically skips YouTube native ads and baked-in sponsorships.",
   "permissions": [
     "activeTab"
