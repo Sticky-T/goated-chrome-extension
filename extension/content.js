@@ -21,14 +21,11 @@ function clickElement(el) {
     }
   };
 
-  // 1. Click target element
   triggerEvents(el);
 
-  // 2. Click any nested <button>, <span>, or <div> inside it
   const children = el.querySelectorAll('button, span, div');
   children.forEach(child => triggerEvents(child));
 
-  // 3. Click parent container if it's an ad slot wrapper
   if (el.parentElement) {
     triggerEvents(el.parentElement);
   }
@@ -43,7 +40,6 @@ function handleNativeAds(video) {
 
   if (isAdShowing) {
     video.muted = true;
-
     video.playbackRate = 16;
     if (!isNaN(video.duration) && video.duration > 0) {
       video.currentTime = video.duration;
@@ -86,7 +82,8 @@ async function fetchSponsorSegments(videoId) {
     
     if (response.ok) {
       currentSegments = await response.json();
-      console.log(`[Goated Skipper] Loaded ${currentSegments.length} sponsor segment(s) for${videoId}.`);
+      // FIXED: Added missing space before ${videoId}
+      console.log(`[Goated Skipper] Loaded ${currentSegments.length} sponsor segment(s) for ${videoId}.`);
     } else {
       currentSegments = [];
     }
@@ -105,7 +102,8 @@ function handleSponsorships(video) {
   for (const item of currentSegments) {
     const [start, end] = item.segment;
     if (currentTime >= start && currentTime < end - 0.5) {
-      console.log(`[Goated Skipper] Skipped sponsor: ${start.toFixed(1)}s ->${end.toFixed(1)}s`);
+      // FIXED: Added missing space before ${end.toFixed}
+      console.log(`[Goated Skipper] Skipped sponsor: ${start.toFixed(1)}s -> ${end.toFixed(1)}s`);
       video.currentTime = end;
       break;
     }
@@ -129,6 +127,7 @@ function monitorPlayback() {
   }
 }
 
+
 function injectButton() {
   if (document.getElementById("custom-yt-btn")) return;
 
@@ -137,23 +136,50 @@ function injectButton() {
   if (targetContainer) {
     const btn = document.createElement("button");
     btn.id = "custom-yt-btn";
-    btn.innerText = "⭐ My Button";
+    btn.innerText = "Download";
     
-    btn.style.cssText = `
-      background-color: rgba(255, 255, 255, 0.1);
-      color: white;
-      border: none;
-      padding: 0 16px;
-      height: 36px;
-      border-radius: 18px;
-      margin-left: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 14px;
-    `;
+    const isDark = document.documentElement.hasAttribute('dark') || 
+                   document.querySelector('html').getAttribute('theme') === 'dark';
 
-    btn.addEventListener("click", () => {
-      alert("Custom button clicked! Video URL: " + window.location.href);
+    if (isDark) {
+      btn.style.cssText = `
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #FFFFFF;
+        border: none;
+        padding: 0 16px;
+        height: 36px;
+        border-radius: 18px;
+        margin-left: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        font-family: Roboto, Arial, sans-serif;
+        box-sizing: border-box;
+        transition: background-color 0.2s;
+      `;
+    } else {
+      btn.style.cssText = `
+        background-color: #F2F2F2;
+        color: #0F0F0F;
+        border: none;
+        padding: 0 16px;
+        height: 36px;
+        border-radius: 18px;
+        margin-left: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+        font-family: Roboto, Arial, sans-serif;
+        box-sizing: border-box;
+        transition: background-color 0.2s;
+      `;
+    }
+
+    btn.onmouseover = () => btn.style.backgroundColor = isDark ? "rgba(255,255,255,0.2)" : "#E5E5E5";
+    btn.onmouseout = () => btn.style.backgroundColor = isDark ? "rgba(255,255,255,0.1)" : "#F2F2F2";
+
+    btn.addEventListener("click", async () => {
+      
     });
 
     targetContainer.appendChild(btn);
