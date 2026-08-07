@@ -13,14 +13,15 @@
     "activeTab"
   ],
   "host_permissions": [
-    "https://www.youtube.com/*",
-    "https://sponsor.ajay.app/*"
+    "https://*://*",
+    "https://ajay.app*"
   ],
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/*"],
       "js": ["content.js"],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "world": "MAIN"
     }
   ]
 }
