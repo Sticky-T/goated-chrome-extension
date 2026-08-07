@@ -129,4 +129,43 @@ function monitorPlayback() {
   }
 }
 
+function injectButton() {
+  if (document.getElementById("custom-yt-btn")) return;
+
+  const targetContainer = document.querySelector("#top-level-buttons-computed");
+
+  if (targetContainer) {
+    const btn = document.createElement("button");
+    btn.id = "custom-yt-btn";
+    btn.innerText = "⭐ My Button";
+    
+    btn.style.cssText = `
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: none;
+      padding: 0 16px;
+      height: 36px;
+      border-radius: 18px;
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+    `;
+
+    btn.addEventListener("click", () => {
+      alert("Custom button clicked! Video URL: " + window.location.href);
+    });
+
+    targetContainer.appendChild(btn);
+  }
+}
+
+const observer = new MutationObserver(() => {
+  if (window.location.pathname === "/watch") {
+    injectButton();
+  }
+});
+
+observer.observe(document.body, { childList: true, subtree: true });
+
 setInterval(monitorPlayback, 250);
