@@ -2,7 +2,7 @@ let currentSegments = [];
 let lastVideoId = "";
 let isFetching = false;
 let isOverrideActive = false;
-let globalDislikesCount = ""; 
+let globalDislikesCount = "";
 
 console.log("%c[Goated Chrome Extension] Extension loaded! Monitoring playback...", "color: #10b981; font-weight: bold; font-size: 14px;");
 
@@ -17,12 +17,12 @@ function activateSpeedTrap(video) {
   console.log("%c[Goated Chrome Extension] Speed trap armed on video element.", "color: #3b82f6;");
 
   const originalDescriptor = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'playbackRate');
-  
+
   Object.defineProperty(video, 'playbackRate', {
-    get: function() {
+    get: function () {
       return originalDescriptor.get.call(this);
     },
-    set: function(value) {
+    set: function (value) {
       if (isOverrideActive) {
         originalDescriptor.set.call(this, 16);
       } else {
@@ -38,23 +38,23 @@ function handleNativeAds(video) {
     const player = document.querySelector('.html5-video-player');
     if (!player) return;
 
-    const isAdShowing = player.classList.contains('ad-showing') || 
-                        player.classList.contains('ad-interrupting') || 
-                        !!document.querySelector('.ytp-ad-player-overlay, .ytp-ad-skip-button-slot');
-    
+    const isAdShowing = player.classList.contains('ad-showing') ||
+      player.classList.contains('ad-interrupting') ||
+      !!document.querySelector('.ytp-ad-player-overlay, .ytp-ad-skip-button-slot');
+
     if (!isAdShowing) {
       if (isOverrideActive) {
         console.log("%c[Goated Chrome Extension] Ads cleared. Restoring speed.", "color: #eab308;");
         isOverrideActive = false;
-        video.playbackRate = 1; 
+        video.playbackRate = 1;
       }
       return;
     }
 
-    isOverrideActive = true;  
-    video.muted = true;       
-    
-    activateSpeedTrap(video); 
+    isOverrideActive = true;
+    video.muted = true;
+
+    activateSpeedTrap(video);
     video.playbackRate = 16;
 
     if (video.duration && isFinite(video.duration) && video.duration > 0.3) {
@@ -78,7 +78,7 @@ async function fetchSponsorSegments(videoId) {
   if (isFetching) return;
   isFetching = true;
   console.log(`%c[Goated Chrome Extension] Fetching database records for Video ID: ${videoId}...`, "color: #8b5cf6;");
-  
+
   try {
     const url = `https://sponsor.ajay.app/api/skipSegments?videoID=${videoId}`;
     const response = await fetch(url);
@@ -100,7 +100,7 @@ async function fetchSponsorSegments(videoId) {
 function handleSponsorships(video) {
   if (isOverrideActive || !currentSegments || currentSegments.length === 0) return;
   const currentTime = video.currentTime;
-  
+
   for (const item of currentSegments) {
     if (!item.segment) continue;
 
@@ -130,7 +130,7 @@ function handleSponsorships(video) {
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       transition: opacity 0.5s ease-out;
     `;
-    
+
     const playerElement = document.querySelector('.html5-video-player') || document.body;
     playerElement.appendChild(toast);
 
@@ -152,30 +152,30 @@ function formatCount(num) {
 
 function handleDislikes(videoId) {
   console.log(`%c[Goated Chrome Extension] Requesting Dislike Data via Proxy for: ${videoId}`, "color: #3b82f6;");
-  
-  window.dispatchEvent(new CustomEvent("FETCH_DISLIKES", { 
-    detail: { videoId } 
+
+  window.dispatchEvent(new CustomEvent("FETCH_DISLIKES", {
+    detail: { videoId }
   }));
 }
 
 window.addEventListener("DISLIKES_RESPONSE", (event) => {
   const { videoId, data } = event.detail;
   if (!data || data.dislikes === undefined) return;
-  
+
   console.log(`%c[Goated Chrome Extension] Found ${data.dislikes} dislikes :)`, "color: #9ffa75;");
-  
+
   globalDislikesCount = formatCount(data.dislikes);
   renderDislikes(globalDislikesCount);
 });
 
 function renderDislikes(dislikesText) {
   try {
-    if (!dislikesText) return; 
+    if (!dislikesText) return;
 
-    const buttonShape = document.querySelector('yt-dislike-button-view-model button') 
-                    || document.querySelector('.ytDislikeButtonViewModelHost button')
-                    || document.querySelector('ytd-toggle-button-renderer #button')
-                    || document.querySelector('[aria-label*="Dislike"]'); 
+    const buttonShape = document.querySelector('yt-dislike-button-view-model button')
+      || document.querySelector('.ytDislikeButtonViewModelHost button')
+      || document.querySelector('ytd-toggle-button-renderer #button')
+      || document.querySelector('[aria-label*="Dislike"]');
 
     if (!buttonShape) return;
 
@@ -200,10 +200,10 @@ function renderDislikes(dislikesText) {
       textNode.style.marginLeft = '6px';
       textNode.style.display = 'inline-block';
       textNode.style.verticalAlign = 'middle';
-    
+
       textNode.style.whiteSpace = 'nowrap';
       textNode.style.width = 'auto';
-      
+
       buttonShape.appendChild(textNode);
     }
 
@@ -215,6 +215,8 @@ function renderDislikes(dislikesText) {
   }
 }
 
+var videoID = null;
+
 function monitorPlayback() {
   try {
     const urlParams = new URLSearchParams(window.location.search);
@@ -222,37 +224,37 @@ function monitorPlayback() {
     if (videoId && videoId !== lastVideoId) {
       lastVideoId = videoId;
       currentSegments = [];
-      globalDislikesCount = ""; 
-      isOverrideActive = false; 
+      globalDislikesCount = "";
+      isOverrideActive = false;
       fetchSponsorSegments(videoId);
       handleDislikes(videoId);
+      videoID = videoId
     }
-    
+
     const activeVideo = document.querySelector('.html5-main-video') || document.querySelector('video');
     if (activeVideo) {
-      handleNativeAds(activeVideo);     
+      handleNativeAds(activeVideo);
       handleSponsorships(activeVideo);
     }
   } catch (loopError) {
     console.error("%c[Goated Chrome Extension] Core monitor loop error occurred:", "color: #ef4444;", loopError);
   }
 }
-
 var isDark = false;
 
 function injectButton() {
   if (document.getElementById("custom-yt-btn")) return;
 
-  const targetContainer = document.querySelector("#top-level-buttons-computed") 
-                       || document.querySelector("ytd-menu-renderer ytd-segmented-button-renderer")
-                       || document.querySelector("#actions-inner #top-row #menu")
-                       || document.querySelector("yt-flexible-item-renderer-by-line");
+  const targetContainer = document.querySelector("#top-level-buttons-computed")
+    || document.querySelector("ytd-menu-renderer ytd-segmented-button-renderer")
+    || document.querySelector("#actions-inner #top-row #menu")
+    || document.querySelector("yt-flexible-item-renderer-by-line");
 
   if (targetContainer) {
     const btn = document.createElement("button");
     btn.id = "custom-yt-btn";
     btn.innerText = "Download";
-    
+
     // Using YouTube's action-button tokens ensures perfect dark/light/ambient matches
     btn.style.cssText = `
       background-color: #f2f2f2;
@@ -280,7 +282,7 @@ function injectButton() {
     btn.addEventListener("mouseenter", () => {
       btn.style.backgroundColor = isDark ? "#5f5f5f" : "#c3c2c2";
     });
-    
+
     btn.addEventListener("mouseleave", () => {
       btn.style.backgroundColor = isDark ? "#363636" : "#f2f2f2";
     });
@@ -288,7 +290,8 @@ function injectButton() {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      alert("Custom button clicked! Video URL: " + window.location.href);
+      alert("Opening download url for: " + window.location.href);
+      window.open(`https://bergung.hoffnungfuerdiezukunft.net/#https://www.youtube.com/watch?v=${videoID}`, "_blank")
     });
 
     if (targetContainer.tagName === "YTD-SEGMENTED-BUTTON-RENDERER") {
@@ -316,10 +319,10 @@ const observer = new MutationObserver((mutations) => {
   }
 
   mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'dark') {
-            isDark = document.documentElement.hasAttribute('dark');
-        }
-    });
+    if (mutation.type === 'attributes' && mutation.attributeName === 'dark') {
+      isDark = document.documentElement.hasAttribute('dark');
+    }
+  });
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
