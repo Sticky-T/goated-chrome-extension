@@ -8,15 +8,22 @@
     "48": "goated-icon.png",
     "128": "goated-icon.png"
   },
-  "description": "Automatically skips YouTube native ads and baked-in sponsorships.",
+  "description": "Automatically skips YouTube ads, sponsorships, and adds back the dislike counter! :)",
   "permissions": [
     "activeTab"
   ],
   "host_permissions": [
     "https://*://*",
-    "https://ajay.app*"
+    "https://ajay.app*",
+    "https://returnyoutubedislikesapi.com/*",
+    "https://www.youtube.com/*"
   ],
   "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["videoDataFetcher.js"],
+      "run_at": "document_idle"
+    },
     {
       "matches": ["https://www.youtube.com/*"],
       "js": ["content.js"],
