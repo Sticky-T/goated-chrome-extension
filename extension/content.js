@@ -224,7 +224,6 @@ function monitorPlayback() {
     if (videoId && videoId !== lastVideoId) {
       lastVideoId = videoId;
       currentSegments = [];
-      globalDislikesCount = "";
       isOverrideActive = false;
       fetchSponsorSegments(videoId);
       handleDislikes(videoId);
@@ -278,7 +277,6 @@ function injectButton() {
       btn.style.backgroundColor = "#363636";
     }
 
-    // Add native hover and active press feedback states dynamically
     btn.addEventListener("mouseenter", () => {
       btn.style.backgroundColor = isDark ? "#5f5f5f" : "#c3c2c2";
     });
