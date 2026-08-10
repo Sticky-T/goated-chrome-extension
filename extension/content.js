@@ -172,47 +172,49 @@ function renderDislikes(dislikesText) {
   try {
     if (!dislikesText) return;
 
-    const buttonShape = document.querySelector('yt-dislike-button-view-model button')
-      || document.querySelector('.ytDislikeButtonViewModelHost button')
-      || document.querySelector('ytd-toggle-button-renderer #button')
-      || document.querySelector('[aria-label*="Dislike"]');
+    const buttonShape = document.querySelector('.ytDislikeButtonViewModelHost .ytSpecButtonShapeNextHost');
 
     if (!buttonShape) return;
-
     buttonShape.style.width = 'auto';
     buttonShape.style.maxWidth = 'none';
     buttonShape.style.minWidth = 'max-content';
     buttonShape.style.paddingRight = '12px';
     buttonShape.style.display = 'inline-flex';
     buttonShape.style.alignItems = 'center';
+    buttonShape.style.justifyContent = 'center';
 
     const buttonParent = buttonShape.parentElement;
     if (buttonParent) {
       buttonParent.style.width = 'auto';
       buttonParent.style.maxWidth = 'none';
+      buttonParent.style.display = 'flex';
+
+      const grandParent = buttonParent.parentElement;
+      if (grandParent && grandParent.classList.contains('yt-spec-button-shape-next--segmented-start')) {
+        grandParent.style.maxWidth = 'none';
+        grandParent.style.width = 'auto';
+      }
     }
 
     let textNode = buttonShape.querySelector('#ext-dislike-text');
-
     if (!textNode) {
       textNode = document.createElement('div');
       textNode.id = 'ext-dislike-text';
       textNode.style.marginLeft = '6px';
       textNode.style.display = 'inline-block';
       textNode.style.verticalAlign = 'middle';
-
       textNode.style.whiteSpace = 'nowrap';
       textNode.style.width = 'auto';
-
       buttonShape.appendChild(textNode);
     }
 
     if (textNode.textContent !== dislikesText) {
       textNode.textContent = dislikesText;
     }
-  } catch {
-    console.log("%c[Goated Chrome Extension] Failed to render dislike count D:", "color: #ff0505f0")
+  } catch (error) {
+    console.log("%c[Goated Chrome Extension] Failed to render dislike count D:", "color: #ff0505f0", error);
   }
+
 }
 
 var videoID = null;
