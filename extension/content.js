@@ -172,49 +172,65 @@ function renderDislikes(dislikesText) {
   try {
     if (!dislikesText) return;
 
-    const buttonShape = document.querySelector('.ytDislikeButtonViewModelHost .ytSpecButtonShapeNextHost');
+    if (!dislikesText) return;
 
-    if (!buttonShape) return;
-    buttonShape.style.width = 'auto';
-    buttonShape.style.maxWidth = 'none';
-    buttonShape.style.minWidth = 'max-content';
-    buttonShape.style.paddingRight = '12px';
-    buttonShape.style.display = 'inline-flex';
-    buttonShape.style.alignItems = 'center';
-    buttonShape.style.justifyContent = 'center';
+    const buttonShapes = document.querySelectorAll(
+      '.ytDislikeButtonViewModelHost button, dislike-button-view-model button, .ytDislikeButtonViewModelHost .ytSpecButtonShapeNextHost'
+    );
 
-    const buttonParent = buttonShape.parentElement;
-    if (buttonParent) {
-      buttonParent.style.width = 'auto';
-      buttonParent.style.maxWidth = 'none';
-      buttonParent.style.display = 'flex';
+    if (buttonShapes.length === 0) {
+      console.log("NO BUTTON FOuND D:");
+      return;
+    }
 
-      const grandParent = buttonParent.parentElement;
-      if (grandParent && grandParent.classList.contains('yt-spec-button-shape-next--segmented-start')) {
-        grandParent.style.maxWidth = 'none';
-        grandParent.style.width = 'auto';
+    buttonShapes.forEach((buttonShape) => {
+      buttonShape.style.width = 'auto';
+      buttonShape.style.maxWidth = 'none';
+      buttonShape.style.minWidth = 'max-content';
+      buttonShape.style.paddingRight = '12px';
+      buttonShape.style.display = 'inline-flex';
+      buttonShape.style.alignItems = 'center';
+      buttonShape.style.justifyContent = 'center';
+
+      const buttonParent = buttonShape.parentElement;
+      if (buttonParent) {
+        buttonParent.style.width = 'auto';
+        buttonParent.style.maxWidth = 'none';
+        buttonParent.style.display = 'flex';
+        const grandParent = buttonParent.parentElement;
+        if (grandParent && (grandParent.classList.contains('yt-spec-button-shape-next--segmented-start') || grandParent.classList.contains('yt-spec-button-shape-next--segmented-end'))) {
+          grandParent.style.maxWidth = 'none';
+          grandParent.style.width = 'auto';
+        }
       }
-    }
 
-    let textNode = buttonShape.querySelector('#ext-dislike-text');
-    if (!textNode) {
-      textNode = document.createElement('div');
-      textNode.id = 'ext-dislike-text';
-      textNode.style.marginLeft = '6px';
-      textNode.style.display = 'inline-block';
-      textNode.style.verticalAlign = 'middle';
-      textNode.style.whiteSpace = 'nowrap';
-      textNode.style.width = 'auto';
-      buttonShape.appendChild(textNode);
-    }
+      let textNode = buttonShape.querySelector('#ext-dislike-text');
+      if (!textNode) {
+        textNode = document.createElement('yt-formatted-string');
+        textNode.id = 'ext-dislike-text';
 
-    if (textNode.textContent !== dislikesText) {
-      textNode.textContent = dislikesText;
-    }
+        textNode.style.marginLeft = '6px';
+        textNode.style.display = 'inline-block';
+        textNode.style.verticalAlign = 'middle';
+        textNode.style.whiteSpace = 'nowrap';
+        textNode.style.width = 'auto';
+        textNode.style.fontFamily = 'inherit';
+        textNode.style.fontSize = 'inherit';
+        textNode.style.fontWeight = 'inherit';
+        textNode.style.color = 'inherit';
+
+        buttonShape.appendChild(textNode);
+        console.log("ADDED DISLIKE TEXT");
+      }
+
+      if (textNode.textContent !== dislikesText) {
+        console.log("TEXT NODE ALREADY EXISTS AND IS WRONG");
+        textNode.textContent = dislikesText;
+      }
+    });
   } catch (error) {
-    console.log("%c[Goated Chrome Extension] Failed to render dislike count D:", "color: #ff0505f0", error);
+    console.error("[Goated Chrome Extension] Failed to render dislike count:", error);
   }
-
 }
 
 var videoID = null;
@@ -228,6 +244,7 @@ function monitorPlayback() {
       currentSegments = [];
       isOverrideActive = false;
       fetchSponsorSegments(videoId);
+      destroyOldDislikeText();
       handleDislikes(videoId);
       videoID = videoId
     }
@@ -324,6 +341,19 @@ const observer = new MutationObserver((mutations) => {
     }
   });
 });
+
+function destroyOldDislikeText() {
+  try {
+    const oldTextNode = document.getElementById('ext-dislike-text');
+    if (oldTextNode) {
+      oldTextNode.remove();
+      console.log("%c[Goated Chrome Extension] Successfully destroyed old dislike text node.", "color: #ef4444; font-weight: bold;");
+    }
+  } catch (err) {
+    console.error("[Goated Chrome Extension] Error destroying old text node:", err);
+  }
+}
+
 
 observer.observe(document.body, { childList: true, subtree: true });
 
