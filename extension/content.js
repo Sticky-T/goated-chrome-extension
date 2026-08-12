@@ -179,7 +179,6 @@ function renderDislikes(dislikesText) {
     );
 
     if (buttonShapes.length === 0) {
-      console.log("NO BUTTON FOuND D:");
       return;
     }
 
@@ -220,16 +219,218 @@ function renderDislikes(dislikesText) {
         textNode.style.color = 'inherit';
 
         buttonShape.appendChild(textNode);
-        console.log("ADDED DISLIKE TEXT");
       }
 
       if (textNode.textContent !== dislikesText) {
-        console.log("TEXT NODE ALREADY EXISTS AND IS WRONG");
         textNode.textContent = dislikesText;
       }
     });
   } catch (error) {
     console.error("[Goated Chrome Extension] Failed to render dislike count:", error);
+  }
+}
+
+window.addEventListener('keydown', (e) => {
+  const activeEl = document.activeElement;
+  if (
+    activeEl && (
+      activeEl.tagName === 'INPUT' ||
+      activeEl.tagName === 'TEXTAREA' ||
+      activeEl.isContentEditable
+    )
+  ) {
+    return;
+  }
+
+  const video = document.querySelector('video');
+  if (!video) return;
+
+  if (e.key === '[') {
+    e.preventDefault();
+    activateSpeedTrap(video);
+    const newSpeed = Math.max(0.5, video.playbackRate - 0.5);
+    video.playbackRate = newSpeed;
+  }
+
+  if (e.key === ']') {
+    e.preventDefault();
+    activateSpeedTrap(video);
+    const newSpeed = Math.min(16.0, video.playbackRate + 0.5);
+    video.playbackRate = newSpeed;
+  }
+
+  if (e.key === '\\') {
+    e.preventDefault();
+    activateSpeedTrap(video);
+    video.playbackRate = 1.0;
+  }
+});
+
+function renderCustomSpeedChip() {
+  try {
+    const buttonShapes = document.querySelectorAll(
+      '.ytp-variable-speed-panel-chips'
+    );
+
+    if (buttonShapes.length === 0) return;
+
+    buttonShapes.forEach((buttonShape) => {
+      buttonShape.style.setProperty('display', 'flex', 'important');
+      buttonShape.style.setProperty('flex-wrap', 'wrap', 'important');
+      buttonShape.style.setProperty('justify-content', 'flex-start', 'important');
+
+      let speedBtn = buttonShape.querySelector('#ext-custom-speed3');
+      if (!speedBtn) {
+        speedBtn = document.createElement('button');
+        speedBtn.id = 'ext-custom-speed3';
+
+        speedBtn.style.cssText = `
+          background-color: var(--yt-spec-badge-chip-background, rgba(255, 255, 255, 0.1));
+          color: var(--yt-spec-text-primary, #fff);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          padding: 4px 8px; /* Slightly leaner padding keeps the layout intact */
+          margin: 3px;      /* Consistent spacing rules */
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-family: inherit;
+          box-sizing: border-box;
+        `;
+
+        speedBtn.textContent = "3.0x";
+
+        speedBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const video = document.querySelector('video');
+          if (video) {
+            activateSpeedTrap(video);
+            video.playbackRate = 3.0;
+          }
+
+          const settingsButton = document.querySelector('.ytp-settings-button');
+          if (settingsButton) settingsButton.click();
+        });
+
+        buttonShape.querySelectorAll('button, .ytp-speed-chip').forEach(nativeChip => {
+          if (nativeChip.id !== 'ext-custom-speed') {
+            nativeChip.style.setProperty('padding', '4px 8px', 'important');
+            nativeChip.style.setProperty('margin', '3px', 'important');
+            nativeChip.style.setProperty('font-size', '12px', 'important');
+          }
+        });
+
+        buttonShape.insertBefore(speedBtn, buttonShape.firstElementChild);
+      }
+
+      let speedBtn2 = buttonShape.querySelector('#ext-custom-speed4');
+      if (!speedBtn2) {
+        speedBtn2 = document.createElement('button');
+        speedBtn2.id = 'ext-custom-speed4';
+
+        speedBtn2.style.cssText = `
+          background-color: var(--yt-spec-badge-chip-background, rgba(255, 255, 255, 0.1));
+          color: var(--yt-spec-text-primary, #fff);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          padding: 4px 8px; /* Slightly leaner padding keeps the layout intact */
+          margin: 3px;      /* Consistent spacing rules */
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-family: inherit;
+          box-sizing: border-box;
+        `;
+
+        speedBtn2.textContent = "4.0x";
+
+        speedBtn2.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const video = document.querySelector('video');
+          if (video) {
+            activateSpeedTrap(video);
+            video.playbackRate = 4.0;
+          }
+
+          const settingsButton = document.querySelector('.ytp-settings-button');
+          if (settingsButton) settingsButton.click();
+        });
+
+        buttonShape.querySelectorAll('button, .ytp-speed-chip').forEach(nativeChip => {
+          if (nativeChip.id !== 'ext-custom-speed') {
+            nativeChip.style.setProperty('padding', '4px 8px', 'important');
+            nativeChip.style.setProperty('margin', '3px', 'important');
+            nativeChip.style.setProperty('font-size', '12px', 'important');
+          }
+        });
+
+        buttonShape.insertBefore(speedBtn2, buttonShape.firstElementChild);
+      }
+
+      let speedBtn3 = buttonShape.querySelector('#ext-custom-speed5');
+      if (!speedBtn3) {
+        speedBtn3 = document.createElement('button');
+        speedBtn3.id = 'ext-custom-speed5';
+
+        speedBtn3.style.cssText = `
+          background-color: var(--yt-spec-badge-chip-background, rgba(255, 255, 255, 0.1));
+          color: var(--yt-spec-text-primary, #fff);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          padding: 4px 8px; /* Slightly leaner padding keeps the layout intact */
+          margin: 3px;      /* Consistent spacing rules */
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-family: inherit;
+          box-sizing: border-box;
+        `;
+
+        speedBtn3.textContent = "5.0x";
+
+        speedBtn3.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const video = document.querySelector('video');
+          if (video) {
+            activateSpeedTrap(video);
+            video.playbackRate = 5.0;
+          }
+
+          const settingsButton = document.querySelector('.ytp-settings-button');
+          if (settingsButton) settingsButton.click();
+        });
+
+        buttonShape.querySelectorAll('button, .ytp-speed-chip').forEach(nativeChip => {
+          if (nativeChip.id !== 'ext-custom-speed') {
+            nativeChip.style.setProperty('padding', '4px 8px', 'important');
+            nativeChip.style.setProperty('margin', '3px', 'important');
+            nativeChip.style.setProperty('font-size', '12px', 'important');
+          }
+        });
+
+        buttonShape.insertBefore(speedBtn3, buttonShape.firstElementChild);
+      }
+    });
+  } catch (error) {
+    console.error("[Goated Chrome Extension] Failed to render speed chip", error);
   }
 }
 
@@ -335,6 +536,8 @@ const observer = new MutationObserver((mutations) => {
     renderDislikes(globalDislikesCount);
   }
 
+  renderCustomSpeedChip();
+
   mutations.forEach((mutation) => {
     if (mutation.type === 'attributes' && mutation.attributeName === 'dark') {
       isDark = document.documentElement.hasAttribute('dark');
@@ -358,3 +561,115 @@ function destroyOldDislikeText() {
 observer.observe(document.body, { childList: true, subtree: true });
 
 setInterval(monitorPlayback, 150);
+
+let eggBuffer = "";
+const MAX_BUFFER_LENGTH = 10;
+
+window.addEventListener('keydown', (e) => {
+  const activeEl = document.activeElement;
+  if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
+    return;
+  }
+
+  if (e.key.length === 1) {
+    eggBuffer += e.key.toLowerCase();
+    if (eggBuffer.length > MAX_BUFFER_LENGTH) {
+      eggBuffer = eggBuffer.substring(eggBuffer.length - MAX_BUFFER_LENGTH);
+    }
+  }
+
+  const key = e.key.toLowerCase();
+
+  if (['s', 'p', 'i', 'n', 'y', 'r', 'g', 'b'].includes(key)) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  if (eggBuffer.endsWith("spiny")) {
+    eggBuffer = "";
+    toggleSpinyEasterEgg();
+  }
+
+  if (eggBuffer.endsWith("rgb")) {
+    eggBuffer = "";
+    toggleRGBEasterEgg();
+  }
+}, true);
+
+function toggleSpinyEasterEgg() {
+  const existingStyle = document.getElementById('ext-spiny-egg-css');
+
+  if (existingStyle) {
+    existingStyle.remove();
+    console.log("%c[Goated Chrome Extension] Spiny mode deactivated.", "color: #ef4444;");
+    return;
+  }
+
+  console.log("%c[Goated Chrome Extension] spiny :3", "color: #9a24fa; font-weight: bold; font-size: 16px;");
+
+  const styleNode = document.createElement('style');
+  styleNode.id = 'ext-spiny-egg-css';
+
+  styleNode.textContent = `
+    @keyframes constantSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .html5-main-video, video {
+      animation: constantSpin 2s linear infinite !important;
+      transform-origin: center center !important;
+    }
+  `;
+
+  document.head.appendChild(styleNode);
+}
+
+function toggleRGBEasterEgg() {
+  const existingStyle = document.getElementById('ext-rgb-egg-css');
+
+  if (existingStyle) {
+    existingStyle.remove();
+    console.log("%c[Goated Chrome Extension] RGB mode deactivated.", "color: #ef4444;");
+    return;
+  }
+
+  console.log("%c[Goated Chrome Extension] RGB :3", "color: #9a24fa; font-weight: bold; font-size: 16px;");
+
+  const styleNode = document.createElement('style');
+  styleNode.id = 'ext-rgb-egg-css';
+
+  styleNode.textContent = `
+    @keyframes rgbShift {
+      0% { color: #ff0000; fill: #ff0000; }
+      20% { color: #ff00ff; fill: #ff00ff; }
+      40% { color: #0000ff; fill: #0000ff; }
+      60% { color: #00ffff; fill: #00ffff; }
+      80% { color: #00ff00; fill: #00ff00; }
+      100% { color: #ff0000; fill: #ff0000; }
+    }
+
+    #video-title, 
+    ytd-watch-metadata #title h1,
+    .yt-core-attributed-string,
+    #channel-name a,
+    #text-container,
+    ytd-guide-entry-renderer span {
+      animation: rgbShift 4s linear infinite !important;
+    }
+
+    yt-icon, 
+    svg path {
+      animation: rgbShift 4s linear infinite !important;
+    }
+    
+    #custom-yt-btn {
+      animation: rgbShift 4s linear infinite !important;
+      border: 1px solid currentColor !important;
+    }
+  `;
+
+  document.head.appendChild(styleNode);
+}
+
+
